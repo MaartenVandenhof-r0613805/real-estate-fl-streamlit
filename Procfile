@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run ./scripts/streamlit_script.py
+web: sh setup.sh && streamlit run ./scripts/real_estate_model.py
