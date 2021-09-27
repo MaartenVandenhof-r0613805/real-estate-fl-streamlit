@@ -21,6 +21,7 @@ st.set_page_config(layout="wide")
 # Analysis of the real estate market in the region of Flanders, Belgium
 Select the housing type by pressing the correct button in the sidebar.
 
+Click [here](https://real-estate-fl-ml.herokuapp.com) to go to the price prediction model.
 '''
 
 # Create buttons for housing type

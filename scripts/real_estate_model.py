@@ -8,7 +8,7 @@ from sklearn.metrics import mean_squared_error as MSE
 # Import models and data
 reg_model_app = pickle.load(open(Path(__file__).parents[1] / 'models' / 'lasso_reg_app.pkl', "rb"))
 dt_model_app = pickle.load(open(Path(__file__).parents[1] / 'models' / 'decision_tree_app.pkl', "rb"))
-
+ridge_model_app = pickle.load(open(Path(__file__).parents[1] / 'models' / 'ridge_reg_app.pkl', "rb"))
 app_model_df = pd.read_csv(Path(__file__).parents[1] / 'data' / 'app_model.csv')
 app_model_df = app_model_df.sort_values(by="year:period")
 
@@ -24,7 +24,7 @@ st.set_page_config(layout="wide")
 # Create predictions
 data = np.array(app_model_df.drop(columns=["next_q_lvl_app", "year:period"]))
 
-# Decision tree predictions
+# Lasso regression predictions
 y_reg_pred = reg_model_app.predict(data)
 
 y_pred_reg_chart_df = app_model_df[["next_q_lvl_app", "year:period"]].copy()
@@ -33,11 +33,26 @@ y_pred_reg_chart_df = y_pred_reg_chart_df.rename(columns={"next_q_lvl_app": "Act
 y_pred_reg_chart_df = y_pred_reg_chart_df.set_index("year:period")
 
 '''
-### Regression predictions:
+### Lasso regression predictions:
 '''
 st.write('''MSE: {}'''.format(MSE(y_reg_pred, app_model_df["next_q_lvl_app"])))
 
 st.line_chart(y_pred_reg_chart_df)
+
+# Ridge regression predictions
+y_ridge_pred = ridge_model_app.predict(data)
+
+y_pred_ridge_chart_df = app_model_df[["next_q_lvl_app", "year:period"]].copy()
+y_pred_ridge_chart_df["Price prediction"] = y_ridge_pred
+y_pred_ridge_chart_df = y_pred_ridge_chart_df.rename(columns={"next_q_lvl_app": "Actual price increase"})
+y_pred_ridge_chart_df = y_pred_ridge_chart_df.set_index("year:period")
+
+'''
+### Ridge regression predictions:
+'''
+st.write('''MSE: {}'''.format(MSE(y_ridge_pred, app_model_df["next_q_lvl_app"])))
+
+st.line_chart(y_pred_ridge_chart_df)
 
 # Decision tree predictions
 y_dt_pred = dt_model_app.predict(data)
@@ -54,11 +69,13 @@ st.write('''MSE: {}'''.format(MSE(y_dt_pred, app_model_df["next_q_lvl_app"])))
 st.line_chart(y_pred_chart_df)
 
 # Create sidebar
+sd_model = reg_model_app
 with st.sidebar:
-    sd_model = reg_model_app
     '''# Predict price increase using the selected model:'''
     if st.button("Lasso regression"):
         sd_model = reg_model_app
+    if st.button("Ridge regression"):
+        sd_model = ridge_model_app
     if st.button("Decision tree"):
         sd_model = dt_model_app
     interest = st.number_input("Current interest rate:", value=data[0, 0])
