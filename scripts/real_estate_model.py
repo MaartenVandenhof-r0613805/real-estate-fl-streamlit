@@ -68,6 +68,21 @@ y_pred_chart_df = y_pred_chart_df.set_index("year:period")
 st.write('''MSE: {}'''.format(MSE(y_dt_pred, app_model_df["next_q_lvl_app"])))
 st.line_chart(y_pred_chart_df)
 
+# Combined model predictions
+
+y_pred_comb = (y_ridge_pred + y_dt_pred) / 2
+
+y_pred_comb_chart_df = app_model_df[["next_q_lvl_app", "year:period"]].copy()
+y_pred_comb_chart_df["Price prediction"] = y_pred_comb
+y_pred_comb_chart_df = y_pred_comb_chart_df.rename(columns={"next_q_lvl_app": "Actual price increase"})
+y_pred_comb_chart_df = y_pred_comb_chart_df.set_index("year:period")
+
+'''
+### Ridge and Decision tree combined predictions:
+'''
+st.write('''MSE: {}'''.format(MSE(y_pred_comb, app_model_df["next_q_lvl_app"])))
+st.line_chart(y_pred_comb_chart_df)
+
 # Create sidebar
 sd_model = reg_model_app
 with st.sidebar:
