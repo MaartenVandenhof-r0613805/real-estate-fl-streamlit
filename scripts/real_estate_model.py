@@ -19,6 +19,8 @@ st.set_page_config(layout="wide")
 # Set title
 '''
 # Predict the increase in apartment price % for the next quartile in the Flanders region, Belgium
+Tool to predict the rise in apartment prices in Flanders, Belgium. The github notebooks and code can be found [
+here](https://github.com/MaartenVandenhof-r0613805/real-estate-analysis)
 '''
 
 # Create predictions
